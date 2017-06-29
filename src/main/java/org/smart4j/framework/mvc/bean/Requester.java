@@ -2,6 +2,8 @@ package org.smart4j.framework.mvc.bean;
 
 import org.smart4j.framework.mvc.util.RequestMethod;
 
+import java.util.Arrays;
+
 /**
  * @author tf
  * @create 2017-06-29 14:36
@@ -29,5 +31,25 @@ public class Requester {
 
     public void setRequestMethods(RequestMethod[] requestMethods) {
         this.requestMethods = requestMethods;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Requester requester = (Requester) o;
+
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(requestUrls, requester.requestUrls)) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(requestMethods, requester.requestMethods);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(requestUrls);
+        result = 31 * result + Arrays.hashCode(requestMethods);
+        return result;
     }
 }

@@ -54,4 +54,8 @@ public class ActionHelper {
             actionMap.put(new Requester(requestUrl, requestMethods), new Handler(actionClass, actionMethod));
         }
     }
+
+    public static Map<Requester, Handler> getActionMap() {
+        return actionMap;
+    }
 }
