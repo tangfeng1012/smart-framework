@@ -9,19 +9,19 @@ import java.util.Arrays;
  * @create 2017-06-29 14:36
  **/
 public class Requester {
-    private String[] requestUrls;
+    private String requestUrls;
     private RequestMethod[] requestMethods;
 
-    public Requester(String[] requestUrls, RequestMethod[] requestMethods) {
+    public Requester(String requestUrls, RequestMethod[] requestMethods) {
         this.requestUrls = requestUrls;
         this.requestMethods = requestMethods;
     }
 
-    public String[] getRequestUrls() {
+    public String getRequestUrls() {
         return requestUrls;
     }
 
-    public void setRequestUrls(String[] requestUrls) {
+    public void setRequestUrls(String requestUrls) {
         this.requestUrls = requestUrls;
     }
 
@@ -40,15 +40,15 @@ public class Requester {
 
         Requester requester = (Requester) o;
 
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(requestUrls, requester.requestUrls)) return false;
+        if (requestUrls != null ? !requestUrls.equals(requester.requestUrls) : requester.requestUrls != null)
+            return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
         return Arrays.equals(requestMethods, requester.requestMethods);
     }
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(requestUrls);
+        int result = requestUrls != null ? requestUrls.hashCode() : 0;
         result = 31 * result + Arrays.hashCode(requestMethods);
         return result;
     }

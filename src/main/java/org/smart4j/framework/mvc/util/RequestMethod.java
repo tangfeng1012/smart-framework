@@ -17,4 +17,7 @@ public enum RequestMethod {
         this.value = value;
     }
 
+    public String getRequestMethod() {
+        return this.name;
+    }
 }

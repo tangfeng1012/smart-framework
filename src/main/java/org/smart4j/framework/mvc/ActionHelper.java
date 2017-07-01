@@ -43,16 +43,18 @@ public class ActionHelper {
 
     private static void HandleActionMethod(Class<?> actionClass, Method actionMethod, Map<Requester, Handler> actionMap) {
         if (actionMethod.isAnnotationPresent(RequestMapping.class)) {
-            String[] requestUrl = actionMethod.getAnnotation(RequestMapping.class).url();
+            String requestUrl = actionMethod.getAnnotation(RequestMapping.class).url();
             RequestMethod[] requestMethods = actionMethod.getAnnotation(RequestMapping.class).method();
             putActionMap(requestMethods, requestUrl, actionClass, actionMethod, actionMap);
         }
     }
 
-    private static void putActionMap(RequestMethod[] requestMethods, String[] requestUrl, Class<?> actionClass, Method actionMethod, Map<Requester, Handler> actionMap) {
-        if (actionMap != null) {
-            actionMap.put(new Requester(requestUrl, requestMethods), new Handler(actionClass, actionMethod));
+    private static void putActionMap(RequestMethod[] requestMethods, String requestUrl, Class<?> actionClass, Method actionMethod, Map<Requester, Handler> actionMap) {
+        // 判断requestUrl中是否包含占位符
+        if (requestUrl.matches(".+\\{\\w+\\}.*")) {
+            requestUrl.replaceAll("\\{\\w+\\}", "(\\\\\\w+)");
         }
+        actionMap.put(new Requester(requestUrl, requestMethods), new Handler(actionClass, actionMethod));
     }
 
     public static Map<Requester, Handler> getActionMap() {

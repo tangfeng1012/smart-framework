@@ -27,23 +27,41 @@ public class DispatcherServlet extends HttpServlet{
 
     private HandlerMapping handlerMapping = InstanceFactory.getHandlerMapping();
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding(FrameworkConstant.ENCODING);
+    private HandlerInvoker handlerInvoker = InstanceFactory.getHandlerInvoker();
 
-        String reqMethod = req.getMethod();
-        String requestPath = WebUtil.getRequestUrl(req);
+    private ViewResolver viewResolver = InstanceFactory.getViewResolver();
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(FrameworkConstant.ENCODING);
+
+        String reqMethod = request.getMethod();
+        String requestPath = WebUtil.getRequestUrl(request);
         logger.debug("[smart framework: {}, {}]", requestPath, reqMethod);
         //将"/"重定向到首页
         if (requestPath.equals("/")) {
-            WebUtil.RedirectRequest(FrameworkConstant.HOME_PAGE_PATH, req, resp);
+            WebUtil.redirectRequest(FrameworkConstant.HOME_PAGE_PATH, request, response);
         }
         if (requestPath.endsWith("/")) {
             requestPath = requestPath.substring(0, requestPath.length() - 1);
         }
 
         Handler handler = handlerMapping.getHandler(requestPath, reqMethod);
+        //未找到Action，则跳转到404页面
+        if (handler == null) {
+            WebUtil.sendError(response, HttpServletResponse.SC_NOT_FOUND, "url和method没有匹配上");
+            return;
+        }
 
-        super.service(req, resp);
+        try {
+            // 调用Handler
+            Object invorkResult = handlerInvoker.invokeHandler(request, handler);
+            //视图解析
+            viewResolver.resolveView(request, response, invorkResult);
+        } catch (Exception e) {
+            //
+        } finally {
+
+        }
     }
 }

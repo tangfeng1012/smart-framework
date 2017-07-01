@@ -33,6 +33,22 @@ public class ClassUtil {
         return cls;
     }
 
+    public static boolean isInt(Class<?> cls) {
+        return cls == int.class || cls == Integer.class;
+    }
+
+    public static boolean isLong(Class<?> cls) {
+        return cls == long.class || cls == Long.class;
+    }
+
+    public static boolean isDouble(Class<?> cls) {
+        return cls == double.class || cls == Double.class;
+    }
+
+    public static boolean isString(Class cls) {
+        return cls == String.class;
+    }
+
     public static void main(String[] args) throws ClassNotFoundException {
         Class<?> loadClass = ClassUtil.loadClass("org.smart4j.framework.HelperLoader");
         System.out.println(loadClass.getName());

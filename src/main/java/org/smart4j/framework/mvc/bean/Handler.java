@@ -1,6 +1,7 @@
 package org.smart4j.framework.mvc.bean;
 
 import java.lang.reflect.Method;
+import java.util.regex.Matcher;
 
 /**
  * @author tf
@@ -9,6 +10,7 @@ import java.lang.reflect.Method;
 public class Handler {
     private Class<?> actionClass;
     private Method actionMethod;
+    private Matcher requestMatcher;
 
     public Handler(Class<?> actionClass, Method actionMethod) {
         this.actionClass = actionClass;
@@ -29,5 +31,12 @@ public class Handler {
 
     public void setActionMethod(Method actionMethod) {
         this.actionMethod = actionMethod;
+    }
+
+    public Matcher getRequestMatcher() {
+        return requestMatcher;
+    }
+    public void setRequestMatcher(Matcher requestMatcher) {
+        this.requestMatcher = requestMatcher;
     }
 }
