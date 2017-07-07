@@ -13,7 +13,7 @@ public interface FrameworkConstant {
 
     String HOME_PAGE_PATH = ConfigHelper.getString("smart.framework.app.homepage_path", "/index.html");
 
-    String JSP_PATH = ConfigHelper.getString("smart.framework.app.jsp_path", "/WEB-INF/JSP");
+    String JSP_PATH = ConfigHelper.getString("smart.framework.app.jsp_path", "/WEB-INF/JSP/");
 
     String RESOURCE_PATH = ConfigHelper.getString("smart.framework.app.resources_path", "/resources/");
 

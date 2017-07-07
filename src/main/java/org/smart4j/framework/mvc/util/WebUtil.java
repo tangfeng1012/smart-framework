@@ -5,9 +5,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.smart4j.framework.FrameworkConstant;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,6 +18,21 @@ import java.util.Map;
  * @create 2017-06-29 16:30
  **/
 public class WebUtil {
+
+    public static void writeJSON(HttpServletRequest request, HttpServletResponse response, String result) {
+        try {
+            //设置响应头
+            response.setCharacterEncoding(FrameworkConstant.ENCODING);
+            response.setContentType("application/json");
+            //向响应写入数据
+            PrintWriter printWriter = response.getWriter();
+            printWriter.write(result);
+            printWriter.flush();
+            printWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException("返回json格式失败", e);
+        }
+    }
 
     public static String getRequestUrl(HttpServletRequest request) {
         String servletPath = request.getServletPath();
@@ -56,6 +73,23 @@ public class WebUtil {
             response.sendRedirect(request.getContextPath() + pagePath);
         } catch (IOException e) {
             throw new RuntimeException("重定向出错", e);
+        }
+    }
+
+    public static void sendRedirect(HttpServletRequest request, HttpServletResponse response, String viewPath) {
+        try {
+            response.sendRedirect(request.getContextPath() + viewPath);
+        } catch (IOException e) {
+            throw new RuntimeException("重定向到" + viewPath + "异常", e);
+        }
+    }
+
+    public static void forwardRequest(HttpServletRequest request, HttpServletResponse response, String forwardPath) {
+        try {
+            request.getRequestDispatcher(forwardPath).forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("转发请求到" + forwardPath + "失败", e);
         }
     }
 

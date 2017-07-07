@@ -1,6 +1,8 @@
 package org.smart4j.framework.ioc;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.smart4j.framework.core.ClassHelper;
 import org.smart4j.framework.ioc.annotation.Component;
 import org.smart4j.framework.mvc.Exception.InitializationException;
@@ -16,10 +18,13 @@ import java.util.Map;
  * @create 2017-06-27 17:59
  **/
 public class BeanHelper {
+    private static final Logger logger = LoggerFactory.getLogger(BeanHelper.class);
+
     private static final Map<Class<?>, Object> beanMap = new HashMap<Class<?>, Object>();
 
     static {
         try {
+            StringBuilder builder = new StringBuilder();
             List<Class<?>> basePackageClassList = ClassHelper.getBasePackageClassList();
             if (CollectionUtils.isNotEmpty(basePackageClassList)) {
                 for (Class<?> cls : basePackageClassList) {
@@ -27,9 +32,12 @@ public class BeanHelper {
                             || cls.isAnnotationPresent(Component.class)){
                         Object instance = cls.newInstance();
                         beanMap.put(cls, instance);
+                        builder.append(cls.getSimpleName() + " ");
                     }
                 }
             }
+            System.out.println(builder.toString());
+            logger.info("bean name: " + builder.toString());
         } catch (Exception e) {
             throw new InitializationException("初始化BeanHelper异常", e);
         }

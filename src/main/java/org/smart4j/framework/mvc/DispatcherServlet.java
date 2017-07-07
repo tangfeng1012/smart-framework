@@ -53,15 +53,16 @@ public class DispatcherServlet extends HttpServlet{
             return;
         }
 
+        ApplicationContext.init(request, response);
         try {
             // 调用Handler
             Object invorkResult = handlerInvoker.invokeHandler(request, handler);
             //视图解析
             viewResolver.resolveView(request, response, invorkResult);
         } catch (Exception e) {
-            //
+            //异常解析
         } finally {
-
+            ApplicationContext.destory();
         }
     }
 }

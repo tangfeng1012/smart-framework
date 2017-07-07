@@ -21,6 +21,10 @@ public class View {
         this.data = data;
     }
 
+    public boolean isRedirect() {
+        return this.path.startsWith("/");
+    }
+
     public String getPath() {
         return path;
     }
