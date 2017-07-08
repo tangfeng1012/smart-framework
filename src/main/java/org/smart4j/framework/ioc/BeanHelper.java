@@ -1,6 +1,7 @@
 package org.smart4j.framework.ioc;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smart4j.framework.core.ClassHelper;
@@ -9,9 +10,7 @@ import org.smart4j.framework.mvc.Exception.InitializationException;
 import org.smart4j.framework.mvc.annotation.Controller;
 import org.smart4j.framework.mvc.annotation.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author tf
@@ -24,26 +23,38 @@ public class BeanHelper {
 
     static {
         try {
-            StringBuilder builder = new StringBuilder();
             List<Class<?>> basePackageClassList = ClassHelper.getBasePackageClassList();
+            List<Class<?>> beanClassList = new ArrayList<Class<?>>();
             if (CollectionUtils.isNotEmpty(basePackageClassList)) {
                 for (int i = 0; i < basePackageClassList.size(); i++) {
                     Class<?> cls = basePackageClassList.get(i);
                     if (cls.isAnnotationPresent(Controller.class) || cls.isAnnotationPresent(Service.class)
                             || cls.isAnnotationPresent(Component.class)){
+                        beanClassList.add(cls);
                         Object instance = cls.newInstance();
                         beanMap.put(cls, instance);
-
-                        if (i < basePackageClassList.size() - 1) {
-                            builder.append(cls.getSimpleName() + "、");
-                        }
                     }
                 }
             }
-            logger.info("bean name: [" + builder.toString() + "]");
+            //打印所有的bean
+            printAllBeans(beanClassList);
         } catch (Exception e) {
             throw new InitializationException("初始化BeanHelper异常", e);
         }
+    }
+
+    private static void printAllBeans(List<Class<?>> beanClassList) {
+        StringBuilder builder = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(beanClassList)) {
+            for (int i = 0; i < beanClassList.size(); i++) {
+                Class<?> beanClass = beanClassList.get(i);
+                builder.append(beanClass.getSimpleName());
+                if (i < beanClassList.size() - 1) {
+                    builder.append("、");
+                }
+            }
+        }
+        logger.debug("bean name: [{}]", builder.toString());
     }
 
     public static Map<Class<?>, Object> getBeanMap() {

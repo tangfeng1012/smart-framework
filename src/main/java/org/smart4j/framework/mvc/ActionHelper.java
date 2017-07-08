@@ -2,6 +2,8 @@ package org.smart4j.framework.mvc;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.smart4j.framework.core.ClassHelper;
 import org.smart4j.framework.mvc.Exception.InitializationException;
 import org.smart4j.framework.mvc.annotation.Controller;
@@ -20,17 +22,14 @@ import java.util.Map;
  * @create 2017-06-27 17:58
  **/
 public class ActionHelper {
+    private static Logger logger = LoggerFactory.getLogger(ActionHelper.class);
     private static final Map<Requester, Handler> actionMap = new HashMap<Requester, Handler>();
     static {
         try {
             List<Class<?>> actionClassList = ClassHelper.getClassListByAnnotation(Controller.class);
             Map<Requester, Handler> commonActionMap = new HashMap<Requester, Handler>();
-            StringBuilder builder = new StringBuilder();
             if (CollectionUtils.isNotEmpty(actionClassList)) {
                 for (int i = 0; i < actionClassList.size(); i++) {
-                    if (i < actionClassList.size()) {
-                        builder.append("、");
-                    }
                     Class<?> actionClass = actionClassList.get(i);
                     Method[] actionMethods = actionClass.getDeclaredMethods();
                     if (!ArrayUtils.isEmpty(actionMethods)) {
@@ -41,11 +40,26 @@ public class ActionHelper {
                 }
 
                 actionMap.putAll(commonActionMap);
-                System.out.println("Action name: [" + builder.toString() + "]");
+                printAllAction(actionClassList);
             }
         } catch (Exception e) {
             throw new InitializationException("Action初始化失败", e);
         }
+    }
+
+    // 打印所有Action
+    private static void printAllAction(List<Class<?>> actionClassList) {
+        StringBuilder builder = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(actionClassList)) {
+            for (int i = 0; i < actionClassList.size(); i++) {
+                Class<?> actionClass = actionClassList.get(i);
+                builder.append(actionClass.getSimpleName());
+                if (i < actionClassList.size() - 1) {
+                    builder.append("、");
+                }
+            }
+        }
+        logger.info("Action name: [{}]", builder.toString());
     }
 
     private static void HandleActionMethod(Class<?> actionClass, Method actionMethod, Map<Requester, Handler> actionMap) {
