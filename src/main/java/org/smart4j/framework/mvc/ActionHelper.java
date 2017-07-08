@@ -25,16 +25,23 @@ public class ActionHelper {
         try {
             List<Class<?>> actionClassList = ClassHelper.getClassListByAnnotation(Controller.class);
             Map<Requester, Handler> commonActionMap = new HashMap<Requester, Handler>();
+            StringBuilder builder = new StringBuilder();
             if (CollectionUtils.isNotEmpty(actionClassList)) {
-                for (Class<?> actionClass : actionClassList) {
+                for (int i = 0; i < actionClassList.size(); i++) {
+                    if (i < actionClassList.size()) {
+                        builder.append("、");
+                    }
+                    Class<?> actionClass = actionClassList.get(i);
                     Method[] actionMethods = actionClass.getDeclaredMethods();
-                    if (ArrayUtils.isEmpty(actionMethods)) {
+                    if (!ArrayUtils.isEmpty(actionMethods)) {
                         for (Method actionMethod : actionMethods) {
                             HandleActionMethod(actionClass, actionMethod, commonActionMap);
                         }
                     }
                 }
+
                 actionMap.putAll(commonActionMap);
+                System.out.println("Action name: [" + builder.toString() + "]");
             }
         } catch (Exception e) {
             throw new InitializationException("Action初始化失败", e);

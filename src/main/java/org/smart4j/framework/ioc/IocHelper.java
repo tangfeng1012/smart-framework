@@ -36,6 +36,8 @@ public class IocHelper {
                                 if (implementsClass != null) {
                                     Object implementsInstance = beanMap.get(implementsClass);
                                     if (implementsInstance != null) {
+                                        // 设置字段为public
+                                        field.setAccessible(true);
                                         // 设置字段的初始值
                                         field.set(beanInstance, implementsInstance);
                                     } else {

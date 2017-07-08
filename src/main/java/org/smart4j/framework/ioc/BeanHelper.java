@@ -27,17 +27,20 @@ public class BeanHelper {
             StringBuilder builder = new StringBuilder();
             List<Class<?>> basePackageClassList = ClassHelper.getBasePackageClassList();
             if (CollectionUtils.isNotEmpty(basePackageClassList)) {
-                for (Class<?> cls : basePackageClassList) {
+                for (int i = 0; i < basePackageClassList.size(); i++) {
+                    Class<?> cls = basePackageClassList.get(i);
                     if (cls.isAnnotationPresent(Controller.class) || cls.isAnnotationPresent(Service.class)
                             || cls.isAnnotationPresent(Component.class)){
                         Object instance = cls.newInstance();
                         beanMap.put(cls, instance);
-                        builder.append(cls.getSimpleName() + " ");
+
+                        if (i < basePackageClassList.size() - 1) {
+                            builder.append(cls.getSimpleName() + "、");
+                        }
                     }
                 }
             }
-            System.out.println(builder.toString());
-            logger.info("bean name: " + builder.toString());
+            logger.info("bean name: [" + builder.toString() + "]");
         } catch (Exception e) {
             throw new InitializationException("初始化BeanHelper异常", e);
         }
